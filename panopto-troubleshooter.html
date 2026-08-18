@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panopto Access Troubleshooter — Stanford Continuing Studies</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&family=Source+Sans+3:wght@400;600;700&display=swap">
+<style>
+  /* Stanford Identity Guide primary palette — identity.stanford.edu/design-elements/color/
+     Cardinal Red #8C1515 · Black #2E2D29 · Cool Gray #4D4F53 · White #FFFFFF
+     Typography: Source Serif Pro (display) + Source Sans Pro (body), per identity.stanford.edu typography guidance */
+  :root{
+    --cardinal:#8C1515;
+    --cardinal-deep:#6E1010;
+    --cardinal-tint:#FBEDED;
+    --black:#2E2D29;
+    --gray:#4D4F53;
+    --gray-line:#D5D5D4;
+    --gray-tint:#EAEAEA;
+    --white:#FFFFFF;
+    --focus:#8C1515;
+    --font-display:"Source Serif 4",Georgia,"Times New Roman",serif;
+    --font-body:"Source Sans 3",Calibri,"Segoe UI",Helvetica,Arial,sans-serif;
+    --font-mono:"Source Sans 3",Calibri,Helvetica,Arial,sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--white);
+    color:var(--black);
+    font-family:var(--font-body);
+    min-height:100vh;
+    -webkit-font-smoothing:antialiased;
+    border-top:6px solid var(--cardinal);
+  }
+
+  .wrap{
+    max-width:820px;
+    margin:0 auto;
+    padding:clamp(28px,5vw,64px) clamp(18px,5vw,32px) 48px;
+  }
+
+  header{margin-bottom:clamp(28px,4vw,40px);}
+  .eyebrow{
+    font-family:var(--font-mono);
+    font-weight:600;
+    letter-spacing:.12em;
+    font-size:12px;
+    color:var(--gray);
+    margin:0 0 14px;
+    text-transform:uppercase;
+  }
+
+  h1{
+    font-family:var(--font-display);
+    font-size:clamp(28px,4.4vw,42px);
+    line-height:1.15;
+    margin:0 0 14px;
+    color:var(--black);
+    font-weight:700;
+  }
+  .sub{
+    font-size:15.5px;
+    line-height:1.55;
+    color:var(--gray);
+    max-width:56ch;
+    margin:0;
+  }
+
+  nav.drawer{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-bottom:22px;
+    padding-bottom:22px;
+    border-bottom:1px solid var(--gray-line);
+  }
+  nav.drawer button{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:13.5px;
+    letter-spacing:.01em;
+    background:var(--white);
+    border:1.5px solid var(--gray-line);
+    color:var(--black);
+    padding:9px 14px;
+    border-radius:3px;
+    cursor:pointer;
+    transition:background .15s ease, border-color .15s ease, color .15s ease;
+  }
+  nav.drawer button .ic{margin-right:7px;color:var(--cardinal);}
+  nav.drawer button:hover{border-color:var(--cardinal);}
+  nav.drawer button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  nav.drawer button.active{
+    background:var(--cardinal);
+    border-color:var(--cardinal);
+    color:var(--white);
+  }
+  nav.drawer button.active .ic{color:var(--white);}
+
+  #cardArea{min-height:120px;}
+
+  .empty-hint{
+    font-size:14px;
+    color:var(--gray);
+    font-style:italic;
+    padding:18px 2px;
+  }
+
+  .card{
+    position:relative;
+    background:var(--white);
+    color:var(--black);
+    border-radius:2px;
+    border:1px solid var(--gray-line);
+    box-shadow:0 12px 28px -18px rgba(46,45,41,.28);
+    padding:clamp(20px,4vw,30px) clamp(20px,4vw,30px) 26px;
+    background-image:repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 33px,
+      rgba(140,21,21,.06) 34px
+    );
+    overflow:hidden;
+  }
+  .card-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    gap:10px;
+    margin-bottom:16px;
+    flex-wrap:wrap;
+  }
+  .card-tag{
+    font-family:var(--font-mono);
+    font-weight:600;
+    font-size:11.5px;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--gray);
+  }
+  .progress-tag{
+    font-family:var(--font-mono);
+    font-weight:600;
+    font-size:11.5px;
+    letter-spacing:.04em;
+    color:var(--cardinal);
+    white-space:nowrap;
+  }
+  .card h2{
+    font-family:var(--font-display);
+    font-weight:700;
+    font-size:21px;
+    margin:0 0 4px;
+    color:var(--black);
+  }
+  .card-note{
+    font-size:13px;
+    color:var(--gray);
+    background:var(--cardinal-tint);
+    border-left:3px solid var(--cardinal);
+    padding:8px 12px;
+    margin:14px 0 4px;
+    line-height:1.5;
+  }
+
+  .methods{
+    display:flex;
+    gap:6px;
+    margin:2px 0 18px;
+  }
+  .methods button{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:12.5px;
+    background:var(--white);
+    border:1px solid var(--gray-line);
+    color:var(--gray);
+    padding:6px 11px;
+    border-radius:2px;
+    cursor:pointer;
+  }
+  .methods button.active{
+    border-color:var(--cardinal);
+    color:var(--cardinal);
+    font-weight:700;
+  }
+  .methods button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+
+  ol.steps{list-style:none;margin:0;padding:0;}
+  ol.steps li{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    padding:10px 0;
+    border-bottom:1px solid var(--gray-tint);
+  }
+  ol.steps li:last-child{border-bottom:none;}
+
+  .chk{
+    flex:0 0 auto;
+    width:19px;height:19px;
+    margin-top:2px;
+    border:1.5px solid var(--gray);
+    border-radius:2px;
+    background:transparent;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+  }
+  .chk svg{width:12px;height:12px;opacity:0;transition:opacity .12s ease;}
+  .chk.checked{border-color:var(--cardinal);background:var(--cardinal-tint);}
+  .chk.checked svg{opacity:1;}
+  .chk:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+
+  .step-body{flex:1 1 auto;}
+  .step-text{font-size:15px;line-height:1.5;}
+  .step-text.done{color:var(--gray);text-decoration:line-through;text-decoration-color:rgba(140,21,21,.45);}
+  .step-text strong{color:var(--cardinal-deep);}
+
+  .url-list{margin:8px 0 2px;display:flex;flex-direction:column;gap:6px;}
+  .url-chip{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--font-mono);
+    font-size:12.5px;
+    background:var(--gray-tint);
+    border:1px solid var(--gray-line);
+    padding:6px 8px;
+    border-radius:2px;
+    max-width:fit-content;
+  }
+  .url-chip button{
+    font-family:var(--font-body);
+    font-weight:600;
+    font-size:11px;
+    background:var(--black);
+    color:var(--white);
+    border:none;
+    padding:3px 8px;
+    border-radius:2px;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .url-chip button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .url-chip.copied button{background:var(--cardinal);}
+
+  .stamp{
+    position:absolute;
+    right:18px;
+    bottom:14px;
+    border:3px solid var(--cardinal);
+    color:var(--cardinal);
+    font-family:var(--font-mono);
+    font-weight:700;
+    letter-spacing:.08em;
+    font-size:15px;
+    padding:6px 12px;
+    border-radius:4px;
+    transform:rotate(-7deg);
+    opacity:0;
+    transition:opacity .25s ease, transform .25s ease;
+    pointer-events:none;
+    background:rgba(255,255,255,.6);
+  }
+  .stamp.show{opacity:1;transform:rotate(-7deg) scale(1);}
+
+  .still-stuck{
+    margin-top:30px;
+    padding-top:20px;
+    border-top:1px solid var(--gray-line);
+    font-size:14px;
+    color:var(--gray);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .still-stuck button{
+    color:var(--white);
+    background:var(--cardinal);
+    border:none;
+    text-decoration:none;
+    padding:8px 14px;
+    border-radius:3px;
+    font-size:13.5px;
+    font-family:var(--font-body);
+    font-weight:600;
+    cursor:pointer;
+  }
+  .still-stuck button:hover{background:var(--cardinal-deep);}
+  .still-stuck button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .still-stuck button.copied{background:var(--black);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important;}
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Stanford Continuing Studies</p>
+      <h1>Can't see your class recordings?</h1>
+      <p class="sub">If Panopto Course Videos won't load inside Canvas, it's almost always a browser blocking third‑party cookies. Pick your browser or device below and check off each step as you go.</p>
+    </header>
+
+    <nav class="drawer" id="drawer"></nav>
+    <section id="cardArea">
+      <p class="empty-hint">Choose a browser or device above to see the fix.</p>
+    </section>
+
+    <div class="still-stuck">
+      <span>Still stuck after trying these steps?</span>
+      <button type="button" id="emailCopyBtn">Copy email: continuingstudies@stanford.edu</button>
+    </div>
+  </div>
+
+<script>
+const CANVAS_URL = "https://canvas.stanford.edu";
+const PANOPTO_URL = "https://stanford-pilot.hosted.panopto.com";
+
+const guides = {
+  chrome: {
+    label:"Chrome", icon:"⊙",
+    steps:[
+      {text:'Open Chrome and click the three dots (⋮) in the top‑right corner, then select <strong>Settings</strong>.'},
+      {text:'Select <strong>Privacy and security</strong> from the left sidebar.'},
+      {text:'Click <strong>Third‑party cookies</strong>.'},
+      {text:'Scroll down to "Sites allowed to use third‑party cookies" and click <strong>Add</strong>.'},
+      {text:'Add both of these sites one at a time:', urls:[CANVAS_URL, PANOPTO_URL]},
+      {text:'Click <strong>Add</strong>, then return to your Canvas page and refresh.'}
+    ]
+  },
+  safari: {
+    label:"Safari", icon:"◐",
+    steps:[
+      {text:'Click <strong>Safari</strong> in the top‑left corner of your screen and select <strong>Settings</strong>.'},
+      {text:'Click the <strong>Privacy</strong> tab at the top of the window.'},
+      {text:'Find <strong>Prevent cross‑site tracking</strong> and uncheck the box.'},
+      {text:'Close the settings window and return to your Canvas tab.'},
+      {text:'Select <strong>Panopto Course Videos</strong> or refresh the page to load the recordings.'}
+    ],
+    note:"You can re‑check \"Prevent cross‑site tracking\" once you're done viewing — you'll just need to uncheck it again next time."
+  },
+  firefox: {
+    label:"Firefox", icon:"◆",
+    methods:[
+      {
+        name:"Quick fix (this page only)",
+        steps:[
+          {text:'On any Canvas page, click the shield icon to the left of the address bar and toggle <strong>Enhanced Tracking Protection</strong> to OFF.'},
+          {text:'The page reloads. You should now see your video thumbnails.'},
+          {text:'Click a video to open the Panopto player.'},
+          {text:'If it asks you to sign in or shows an error, click the shield icon again and toggle protection OFF for the player window.'},
+          {text:'Close the video tab, return to Panopto Course Videos, and click the video again — it should play.'}
+        ]
+      },
+      {
+        name:"Longer‑term fix (site exceptions)",
+        steps:[
+          {text:'Click the three lines (≡) in the top‑right corner and select <strong>Settings</strong>.'},
+          {text:'Select <strong>Privacy &amp; Security</strong> from the left menu.'},
+          {text:'Scroll to <strong>Cookies and Site Data</strong> and click <strong>Manage Exceptions</strong>.'},
+          {text:'Add both of these to the Address field, one at a time:', urls:[CANVAS_URL, PANOPTO_URL]},
+          {text:'Click <strong>Allow</strong>, then <strong>Save Changes</strong>.'},
+          {text:'Return to Canvas and refresh the page.'}
+        ]
+      }
+    ]
+  },
+  ios: {
+    label:"iPhone / iPad", icon:"▢",
+    steps:[
+      {text:'Open the <strong>Settings</strong> app on your device.'},
+      {text:'Scroll to the very bottom and tap <strong>Apps</strong>.'},
+      {text:'Tap <strong>Safari</strong>.'},
+      {text:'Under <strong>Privacy &amp; Security</strong>, make sure <strong>Prevent Cross‑Site Tracking</strong> is OFF (grey).'},
+      {text:'Return to Canvas and refresh the page.'}
+    ],
+    note:"You can toggle this back on once you're done viewing — you'll just need to turn it off again next time."
+  },
+  android: {
+    label:"Android (Chrome)", icon:"▣",
+    steps:[
+      {text:'Open the Chrome app.'},
+      {text:'Tap the three dots (⋮) in the top‑right corner and select <strong>Settings</strong>.'},
+      {text:'Tap <strong>Privacy and security</strong>.'},
+      {text:'Tap <strong>Third‑party cookies</strong>.'},
+      {text:'Tap <strong>Add site exception</strong>.'},
+      {text:'Add both of these one at a time:', urls:[CANVAS_URL, PANOPTO_URL]},
+      {text:'Tap <strong>Add</strong>, then return to Canvas and refresh.'}
+    ]
+  },
+  canvasapp: {
+    label:"Canvas iOS App", icon:"▲",
+    steps:[
+      {text:'Open the Canvas Student app and navigate to <strong>Panopto Course Videos</strong>.'},
+      {text:'If you see a "Panopto Mobile" screen, choose <strong>Stay on the web</strong>.'}
+    ]
+  }
+};
+
+const drawer = document.getElementById('drawer');
+const cardArea = document.getElementById('cardArea');
+let activeKey = null;
+let activeMethodIdx = 0;
+const checkedState = {}; // key: "guideKey" or "guideKey:methodIdx" -> Set of step indices
+
+Object.keys(guides).forEach(key=>{
+  const btn = document.createElement('button');
+  btn.innerHTML = `<span class="ic">${guides[key].icon}</span>${guides[key].label}`;
+  btn.dataset.key = key;
+  btn.addEventListener('click', ()=> selectGuide(key));
+  drawer.appendChild(btn);
+});
+
+function selectGuide(key){
+  activeKey = key;
+  activeMethodIdx = 0;
+  [...drawer.children].forEach(b=> b.classList.toggle('active', b.dataset.key===key));
+  renderCard();
+}
+
+function stateKeyFor(key, methodIdx){
+  return guides[key].methods ? `${key}:${methodIdx}` : key;
+}
+
+function renderCard(){
+  const g = guides[activeKey];
+  const hasMethods = !!g.methods;
+  const steps = hasMethods ? g.methods[activeMethodIdx].steps : g.steps;
+  const sKey = stateKeyFor(activeKey, activeMethodIdx);
+  if(!checkedState[sKey]) checkedState[sKey] = new Set();
+  const checked = checkedState[sKey];
+
+  let methodsHtml = '';
+  if(hasMethods){
+    methodsHtml = '<div class="methods">' + g.methods.map((m,i)=>
+      `<button data-m="${i}" class="${i===activeMethodIdx?'active':''}">${m.name}</button>`
+    ).join('') + '</div>';
+  }
+
+  const noteHtml = g.note ? `<div class="card-note">${g.note}</div>` : '';
+
+  const stepsHtml = steps.map((s,i)=>{
+    const isChecked = checked.has(i);
+    const urlsHtml = s.urls ? `<div class="url-list">${s.urls.map(u=>
+      `<div class="url-chip" data-url="${u}"><span>${u}</span><button type="button">Copy</button></div>`
+    ).join('')}</div>` : '';
+    return `<li>
+      <button class="chk ${isChecked?'checked':''}" data-i="${i}" aria-label="Mark step ${i+1} done">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#8C1515" stroke-width="3"><path d="M4 12l5 5 11-11"/></svg>
+      </button>
+      <div class="step-body">
+        <div class="step-text ${isChecked?'done':''}">${i+1}. ${s.text}</div>
+        ${urlsHtml}
+      </div>
+    </li>`;
+  }).join('');
+
+  const done = checked.size === steps.length;
+
+  cardArea.innerHTML = `
+    <div class="card">
+      <div class="card-head">
+        <div>
+          <span class="card-tag">Card · ${g.label}</span>
+          <h2>${hasMethods ? g.methods[activeMethodIdx].name : 'Fix the recordings'}</h2>
+        </div>
+        <span class="progress-tag">${checked.size} / ${steps.length} steps</span>
+      </div>
+      ${methodsHtml}
+      ${noteHtml}
+      <ol class="steps">${stepsHtml}</ol>
+      <div class="stamp ${done?'show':''}">✓ RESOLVED</div>
+    </div>
+  `;
+
+  cardArea.querySelectorAll('.chk').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const i = parseInt(btn.dataset.i,10);
+      if(checked.has(i)) checked.delete(i); else checked.add(i);
+      renderCard();
+    });
+  });
+
+  cardArea.querySelectorAll('.methods button').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      activeMethodIdx = parseInt(btn.dataset.m,10);
+      renderCard();
+    });
+  });
+
+  cardArea.querySelectorAll('.url-chip').forEach(chip=>{
+    const btn = chip.querySelector('button');
+    btn.addEventListener('click', async ()=>{
+      const url = chip.dataset.url;
+      const ok = await copyToClipboard(url);
+      if(ok){
+        chip.classList.add('copied');
+        btn.textContent = 'Copied';
+        setTimeout(()=>{ chip.classList.remove('copied'); btn.textContent='Copy'; }, 1500);
+      }else{
+        btn.textContent = 'Select & copy';
+      }
+    });
+  });
+}
+
+async function copyToClipboard(text){
+  if(navigator.clipboard && window.isSecureContext){
+    try{
+      await navigator.clipboard.writeText(text);
+      return true;
+    }catch(e){ /* fall through to legacy method below */ }
+  }
+  try{
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    return ok;
+  }catch(e){
+    return false;
+  }
+}
+
+const emailBtn = document.getElementById('emailCopyBtn');
+if(emailBtn){
+  const originalLabel = emailBtn.textContent;
+  emailBtn.addEventListener('click', async ()=>{
+    const ok = await copyToClipboard('continuingstudies@stanford.edu');
+    if(ok){
+      emailBtn.textContent = 'Copied! Paste into your email app';
+      emailBtn.classList.add('copied');
+      setTimeout(()=>{
+        emailBtn.textContent = originalLabel;
+        emailBtn.classList.remove('copied');
+      }, 2000);
+    }else{
+      emailBtn.textContent = 'Select the text above to copy';
+    }
+  });
+}
+</script>
+</body>
+</html>
