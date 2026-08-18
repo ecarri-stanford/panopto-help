@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panopto Access Troubleshooter — Stanford Continuing Studies</title>
+<title>Panopto Access Troubleshooter | Stanford Continuing Studies</title>
 <meta name="description" content="Can't get a Panopto video to load in Canvas? Find your browser or device and follow a short checklist to fix it.">
 <meta property="og:title" content="Panopto Access Troubleshooter">
-<meta property="og:description" content="Fix Panopto videos that won't load in Canvas — quick, browser-specific steps.">
+<meta property="og:description" content="Fix Panopto videos that won't load in Canvas: quick, browser-specific steps.">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#8C1515">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%238C1515'/%3E%3Cpath d='M18 33l10 10 20-20' stroke='white' stroke-width='7' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,700&family=Source+Sans+3:wght@400;600;700&display=swap">
 <style>
-  /* Stanford Identity Guide primary palette — identity.stanford.edu/design-elements/color/
+  /* Stanford Identity Guide primary palette: identity.stanford.edu/design-elements/color/
      Cardinal Red #8C1515 · Black #2E2D29 · Cool Gray #4D4F53 · White #FFFFFF
      Typography: Source Serif Pro (display) + Source Sans Pro (body), per identity.stanford.edu typography guidance */
   :root{
@@ -73,6 +73,22 @@
     max-width:56ch;
     margin:0;
   }
+  .signs-label{
+    font-size:13.5px;
+    font-weight:700;
+    color:var(--black);
+    margin:18px 0 7px;
+  }
+  ul.signs{
+    margin:0 0 18px;
+    padding:0 0 0 20px;
+    max-width:56ch;
+    color:var(--gray);
+    font-size:15px;
+    line-height:1.5;
+  }
+  ul.signs li{margin-bottom:5px;}
+  ul.signs li::marker{color:var(--cardinal);}
 
   nav.drawer{
     display:flex;
@@ -312,7 +328,14 @@
     <header>
       <p class="eyebrow">Stanford Continuing Studies</p>
       <h1>Can't see your class recordings?</h1>
-      <p class="sub">If Panopto Course Videos won't load inside Canvas, it's almost always a browser blocking third‑party cookies. Pick your browser or device below and check off each step as you go.</p>
+      <p class="sub">If Panopto Course Videos won't load in Canvas, it's usually a browser security setting blocking access to Panopto, not a problem with your account.</p>
+      <p class="signs-label">You might be seeing:</p>
+      <ul class="signs">
+        <li>A blank page, or a list that spins and never loads</li>
+        <li>A prompt to sign in again, even though you're already in Canvas</li>
+        <li>&ldquo;Request access,&rdquo; &ldquo;access denied,&rdquo; or another error message</li>
+      </ul>
+      <p class="sub">Pick your browser or device below and check off each step as you go.</p>
     </header>
 
     <nav class="drawer" id="drawer"></nav>
@@ -351,7 +374,7 @@ const guides = {
       {text:'Close the settings window and return to your Canvas tab.'},
       {text:'Select <strong>Panopto Course Videos</strong> or refresh the page to load the recordings.'}
     ],
-    note:"You can re‑check \"Prevent cross‑site tracking\" once you're done viewing — you'll just need to uncheck it again next time."
+    note:"You can re‑check \"Prevent cross‑site tracking\" once you're done viewing. You'll just need to uncheck it again next time."
   },
   firefox: {
     label:"Firefox", icon:"◆",
@@ -363,7 +386,7 @@ const guides = {
           {text:'The page reloads. You should now see your video thumbnails.'},
           {text:'Click a video to open the Panopto player.'},
           {text:'If it asks you to sign in or shows an error, click the shield icon again and toggle protection OFF for the player window.'},
-          {text:'Close the video tab, return to Panopto Course Videos, and click the video again — it should play.'}
+          {text:'Close the video tab, return to Panopto Course Videos, and click the video again. It should play.'}
         ]
       },
       {
@@ -388,7 +411,7 @@ const guides = {
       {text:'Under <strong>Privacy &amp; Security</strong>, make sure <strong>Prevent Cross‑Site Tracking</strong> is OFF (grey).'},
       {text:'Return to Canvas and refresh the page.'}
     ],
-    note:"You can toggle this back on once you're done viewing — you'll just need to turn it off again next time."
+    note:"You can toggle this back on once you're done viewing. You'll just need to turn it off again next time."
   },
   android: {
     label:"Android (Chrome)", icon:"▣",
